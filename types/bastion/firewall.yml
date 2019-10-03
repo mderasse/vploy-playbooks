@@ -1,0 +1,17 @@
+---
+- name: Apply Firewall on Bastion
+  hosts: all
+  become: yes
+  pre_tasks:
+  - name: Set Iptables rules for Bastion
+    set_fact:
+      # Default Policies
+      firewall_default_input: DROP
+      firewall_default_output: DROP
+      firewall_default_forward: DROP
+      # Authorize input
+      firewall_allowed_input_tcp_ports:
+        - 22
+
+  roles:
+    - mderasse.firewall

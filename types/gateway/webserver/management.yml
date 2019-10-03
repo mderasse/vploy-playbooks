@@ -1,0 +1,45 @@
+- name: WebServer - Set Nginx Configuration
+  set_fact:
+    nginx_enable: true
+    nginx_start: true
+    nginx_type: opensource
+    nginx_install_from: os_repository
+    nginx_main_template:
+      template_file: nginx.conf.j2
+      conf_file_name: nginx.conf
+      conf_file_location: /etc/nginx/
+      user: www-data
+      worker_processes: auto
+      #worker_rlimit_nofile: 1024
+      error_log:
+        location: /var/log/nginx/error.log
+        level: warn
+      worker_connections: 1024
+      http_enable: true
+      http_settings:
+        access_log_format:
+          - name: main
+            format: |-
+              '$remote_addr - $remote_user [$time_local] "$request" '
+              '$status $body_bytes_sent "$http_referer" '
+              '"$http_user_agent" "$http_x_forwarded_for"'
+        access_log_location:
+          - name: main
+            location: /var/log/nginx/access.log
+        keepalive_timeout: 65
+        cache: false
+        rate_limit: false
+        keyval: false
+      stream_enable: false
+      http_global_autoindex: false
+
+- name: WebServer - Set LetsEncrypt Configuration
+  set_fact:
+    certbot_create_if_missing: true
+    certbot_certs:
+      - domains:
+        - "awx.{{ dns.domain }}"
+    certbot_admin_email: "{{ extras.mail }}"
+
+- name: WebServer - Load AWX VirtualHost configuration
+  include_tasks: webserver/management/awx.yml

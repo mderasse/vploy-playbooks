@@ -1,0 +1,21 @@
+---
+- name: Apply Basic Roles on Bastion
+  hosts: all
+  pre_tasks:
+    - name: Load Default Debian Config
+      include_tasks: ../../config/debian.yml
+
+    - name: Launch Default Debian Pre Tasks
+      include_tasks: ../../base/pretask_debian.yml
+
+    - name: Set Special conf for Bastion
+      set_fact:
+        bastion_client_authorized_ip: "127.0.0.1"
+
+  roles:
+    - dev-sec.os-hardening
+    - dev-sec.ssh-hardening
+    - mderasse.fail2ban
+    - mderasse.rkhunter
+    - mderasse.bastion_client
+    - geerlingguy.ntp

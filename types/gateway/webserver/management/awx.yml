@@ -1,0 +1,72 @@
+- name: Virtual Host - AWX redirect SSL
+  set_fact:
+    nginx_http_template: "{{ nginx_http_template|default({}) | combine({key: conf}) }}"
+  vars:
+    key: awx-redirect-ssl
+    conf:
+      template_file: http/default.conf.j2
+      conf_file_name: "awx.{{ dns.domain }}.redirect.conf"
+      conf_file_location: /etc/nginx/conf.d/
+      listen: 
+        listen_http: 
+          port: 80
+      server_name: awx.{{ dns.domain }}
+      error_page: /usr/share/nginx/html
+      https_redirect: true      
+
+- name: Virtual Host - AWX with SSL
+  set_fact:
+    nginx_http_template: "{{ nginx_http_template|default({}) | combine({key: conf}) }}"
+  vars:
+    key: default
+    conf:
+      template_file: http/default.conf.j2
+      conf_file_name: "awx.{{ dns.domain }}.conf"
+      conf_file_location: /etc/nginx/conf.d/
+      listen: 
+        listen_https: 
+          port: 443
+      server_name: awx.{{ dns.domain }}
+      error_page: /usr/share/nginx/html
+      autoindex: false
+      reverse_proxy:
+        locations:
+          main:
+            add_headers:
+              strict_transport_security:
+                name: Strict-Transport-Security
+                value: max-age=15768000; includeSubDomains
+                always: true
+              x-frame-options:
+                name: X-Frame-Options
+                value: SAMEORIGIN
+                always: true
+            proxy_set_header:
+              header_host:
+                name: Host
+                value: $host
+              header_x_real_ip:
+                name: X-Real-IP
+                value: $remote_addr
+              header_x_forwarded_for:
+                name: X-Forwarded-For
+                value: $proxy_add_x_forwarded_for
+              header_x_forwarded_proto:
+                name: X-Forwarded-Proto
+                value: $scheme
+            location: /
+            proxy_pass: http://{{ network.private_range | ipaddr('address') | ipmath(2) }}
+            websocket: true
+      ssl:
+        cert: /etc/letsencrypt/live/awx.{{ dns.domain }}/fullchain.pem
+        key: /etc/letsencrypt/live/awx.{{ dns.domain }}/privkey.pem
+        dhparam: /etc/nginx/ssl/dhparam4.pem
+        protocols: TLSv1 TLSv1.1 TLSv1.2
+        ciphers: HIGH:!aNULL:!MD5
+        prefer_server_ciphers: true
+        session_cache: shared:SSL:10m
+        session_timeout: 10m
+        disable_session_tickets: true
+        stapling: true
+        stapling_verify: true
+        

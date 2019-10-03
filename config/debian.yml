@@ -1,0 +1,42 @@
+  - name: Config - Set Default Hardening Config
+    set_fact:
+      os_hardening_enabled: true
+      os_security_packages_clean: true
+      os_security_kernel_enable_core_dump: false
+      os_auth_pw_max_age: 99999
+      os_auth_pw_min_age: 0
+      ufw_manage_defaults: false
+      os_ignore_users:
+        - bastion
+        - ansible
+
+  - name: Config - Set Default SSH Config
+    set_fact:
+      ssh_kerberos_support: false
+      ssh_allow_users: ansible bastion
+      sshd_custom_options:
+        - "AcceptEnv LANG"
+
+  - name: Config - Set Default Fail2Ban Config
+    set_fact:
+      fail2ban_destmail: "{{ extras.mail }}"
+      fail2ban_backend: systemd
+      fail2ban_action: '%(action_mwl)s'
+      fail2ban_filterd_path: ../../files/etc/fail2ban/filter.d/
+      fail2ban_ignoreips: 
+        - 127.0.0.1/8
+        - "{{ bastion.ip }}"
+
+  - name: Config - Set Default Rkhunter Config
+    set_fact:
+      rkhunter_report_email: "{{ extras.mail }}"
+
+  - name: Config - Set Default Bastion Config
+    set_fact:
+      bastion_client_pubkey: "{{ bastion.pubkey }}"
+      bastion_client_authorized_ip: "{{ bastion.ip }}"
+
+  - name: Config - Set Default Ntp Config
+    set_fact:
+      ntp_timezone: "{{ locale.timezone }}"
+      ntp_manage_config: true

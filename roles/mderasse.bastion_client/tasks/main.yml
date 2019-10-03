@@ -1,0 +1,31 @@
+---
+- name: bastion_client - Check required variables
+  fail: msg="Variable '{{ item }}' is not defined"
+  when: item not in vars
+  with_items: "{{required_vars}}"
+
+- name: bastion_client - Adding User bastion
+  user:
+    uid: 1000
+    name: "{{ bastion_client_username }}"
+    comment: Bastion User
+    create_home: yes
+    shell: /bin/bash
+    groups: sudo
+    state: present
+
+- name: bastion_client - Adding Bastion public key
+  authorized_key:
+    user: "{{ bastion_client_username }}"
+    exclusive: yes
+    key: "{{ bastion_client_pubkey }}"
+    key_options: "from=\"{{ bastion_client_authorized_ip }}\""
+    state: present
+
+- name: bastion_client - Passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^{{ bastion_client_username }}'
+    line: '{{ bastion_client_username }} ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'

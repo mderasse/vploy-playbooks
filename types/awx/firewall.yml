@@ -1,0 +1,21 @@
+---
+- name: Apply Firewall on AWX
+  hosts: all
+  become: yes
+  pre_tasks:
+  - name: Set Iptables rules for AWX
+    set_fact:
+      # Default Policies
+      firewall_default_input: DROP
+      firewall_default_output: DROP
+      firewall_default_forward: DROP
+      # Authorize SSH from bastion
+      firewall_additional_rules:
+        - "iptables -t filter -A INPUT -p tcp -s {{ network.private_range | ipaddr('address') | ipmath(1) }} --dport 22 -j ACCEPT"
+        - "iptables -t filter -A INPUT -p tcp -s 172.0.0.0/8 --dport 22 -j ACCEPT"
+      # Authorize input
+      firewall_allowed_input_tcp_ports:
+        - 80
+
+  roles:
+    - mderasse.firewall

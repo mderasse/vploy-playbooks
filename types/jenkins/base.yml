@@ -1,0 +1,17 @@
+---
+- name: Apply Basic Roles on Jenkins
+  hosts: all
+  pre_tasks:
+    - name: Load Default Debian Config
+      include_tasks: ../../config/debian.yml
+
+    - name: Launch Default Debian Pre Tasks
+      include_tasks: ../../base/pretask_debian.yml
+
+  roles:
+    - dev-sec.os-hardening
+    - dev-sec.ssh-hardening
+    - mderasse.fail2ban
+    - mderasse.rkhunter
+    - mderasse.bastion_client
+    - geerlingguy.ntp

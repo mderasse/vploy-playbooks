@@ -1,0 +1,17 @@
+---
+- name: Apply Firewall on Gateway
+  hosts: all
+  become: yes
+  pre_tasks:
+    # Firewall rules for Management GW Only
+    - name: Load Firewall Gateway Management Config
+      include_tasks: firewall/management.yml
+      when: "'management' in group_names"
+
+    # Firewall rules for Not Management Gateway
+    - name: Launch Firewall Gateway Config
+      include_tasks: firewall/basic.yml
+      when: "'management' not in group_names"
+
+  roles:
+    - mderasse.firewall

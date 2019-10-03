@@ -1,0 +1,17 @@
+---
+- name: Apply Firewall on Ldap
+  hosts: all
+  pre_tasks:
+  - name: Set Iptables rules for Ldap
+    set_fact:
+      # Default Policies
+      firewall_default_input: DROP
+      firewall_default_output: DROP
+      firewall_default_forward: DROP
+      # Authorize SSH from bastion and awx
+      firewall_additional_rules:
+        - "iptables -t filter -A INPUT -p tcp -s {{ network.private_range | ipaddr('address') | ipmath(1) }} --dport 22 -j ACCEPT"
+        - "iptables -t filter -A INPUT -p tcp -s {{ network.private_range | ipaddr('address') | ipmath(2) }} --dport 22 -j ACCEPT"
+
+  roles:
+    - mderasse.firewall
