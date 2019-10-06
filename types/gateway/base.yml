@@ -9,6 +9,27 @@
     - name: Launch Default Debian Pre Tasks
       include_tasks: ../../base/pretask_debian.yml
 
+    # SSH + SSH DDOS + Nginx
+    - name: Enable Jails on fail2ban
+      set_fact:
+        fail2ban_jails:
+          - name: sshd
+            enabled: true
+            filter: sshd
+          - name: ssh-ddos
+            enabled: true
+            filter: ssh-ddos
+          - name: nginx-http-auth
+            enabled: true
+            filter: nginx-http-auth
+          - name: recidive
+            enabled: true
+            filter: recidive
+            logpath: /var/log/fail2ban.log
+            bantime: 2d
+            findtime: 2d 
+            maxretry: 3 
+
     - name: Set Special Sysctl configuration for Gateway
       set_fact:
         sysctl_overwrite:
