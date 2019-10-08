@@ -1,0 +1,12 @@
+---
+- name: Apply Bastion Server Roles on Bastion
+  hosts: all
+  pre_tasks:
+    - name: Set Special conf for Bastion
+      set_fact:
+       bastion_server_users: "{{ extras.bastion_users }}"
+       bastion_server_privkey: "{{ vploy_bastion_privkey }}"
+       bastion_server_pubkey: "{{ bastion.pubkey }}"
+       
+  roles:
+    - mderasse.bastion_server

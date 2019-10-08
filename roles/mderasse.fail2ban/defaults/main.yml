@@ -30,6 +30,9 @@ fail2ban_jails:
     filter: sshd
     logpath: '%(sshd_log)s'
     backend: '%(sshd_backend)s'
+  - name: ssh-ddos
+    enabled: true
+    filter: ssh-ddos
   - name: recidive
     enabled: true
     filter: recidive

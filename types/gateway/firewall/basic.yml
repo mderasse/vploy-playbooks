@@ -9,8 +9,6 @@
     firewall_masquerade_authorized_ips:
       - "{{ network.private_range | ipaddr('address') | ipmath(1) }}"
       - "{{ network.private_range | ipaddr('address') | ipmath(2) }}"
-      - "{{ network.private_range | ipaddr('address') | ipmath(3) }}"
-      - "{{ network.private_range | ipaddr('address') | ipmath(4) }}"
     # Testing only
     firewall_allowed_input_tcp_ports:
       - 80
