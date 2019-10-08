@@ -3,7 +3,10 @@
   hosts: all
   become: yes
   pre_tasks:
-      
+  
+    - name: WebServer - Populate service facts
+      service_facts:
+
     - name: WebServer - Load Configuration for Management Gateway
       include_tasks: webserver/management.yml
       when: "'management' in group_names"
@@ -12,19 +15,14 @@
       set_fact:
         nginx_http_template_enable: false
 
-    - name: WebServer - Check that www-data user exist
-      shell: grep "^www-data:" /etc/passwd
-      ignore_errors: yes
-      register: wwwdata_exist
-
     - name: WebServer - Install Nginx
       include_role:
         name: nginxinc.nginx
-      when: wwwdata_exist.rc != 0
+      when: "'nginx' not in services"
 
-    - name: WebServer - Creates SSL Nginx directory
+    - name: WebServer - Creates SSL directory
       file:
-        path: /etc/nginx/ssl
+        path: /etc/ssl
         state: directory
         owner: root
         group: root
@@ -32,7 +30,7 @@
 
     - name: WebServer - Generate Diffie-Hellman for nginx
       openssl_dhparam:
-        path: /etc/nginx/ssl/dhparam4.pem
+        path: /etc/ssl/dhparam4.pem
         owner: root
         group: root
         mode: 0644
@@ -42,5 +40,5 @@
         nginx_http_template_enable: true
 
   roles:
-    - geerlingguy.certbot
     - nginxinc.nginx
+    - geerlingguy.certbot

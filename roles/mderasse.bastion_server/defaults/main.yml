@@ -1,0 +1,9 @@
+---
+# The Full role need to be executed in "become"
+ansible_become: yes
+
+# List of variables required for the run of that playbooks
+required_vars:
+  - bastion_server_users
+  - bastion_server_privkey
+  - bastion_server_pubkey

@@ -19,9 +19,6 @@
           - name: ssh-ddos
             enabled: true
             filter: ssh-ddos
-          - name: nginx-http-auth
-            enabled: true
-            filter: nginx-http-auth
           - name: recidive
             enabled: true
             filter: recidive
@@ -29,6 +26,9 @@
             bantime: 2d
             findtime: 2d 
             maxretry: 3 
+          - name: nginx-http-auth
+            enabled: true
+            filter: nginx-http-auth
 
     - name: Set Special Sysctl configuration for Gateway
       set_fact:

@@ -1,0 +1,35 @@
+---
+- name: "Bastion Server - Create User {{ bastion_server_user.username }}"
+  user:
+    name: "{{ bastion_server_user.username }}"
+    create_home: yes
+    shell: /opt/tg/cache
+    state: present
+  register: created_user
+
+- name: Bastion Server - Adding Public Keys
+  authorized_key:
+    user: "{{ bastion_server_user.username  }}"
+    exclusive: yes
+    key: "{{ pubkey.key }}"
+    key_options: "{{ ('from=\"' + pubkey.from_ip + '\"') if pubkey.from_ip else omit }}"
+    state: present
+  loop_control:
+    loop_var: pubkey
+  with_items: "{{ bastion_server_user.pubkeys }}"
+
+- name: Bastion Server - Write private Key
+  copy:
+    content: "{{ bastion_server_privkey + \"\n\" }}"
+    dest: "{{ created_user.home }}/.ssh/id_rsa"
+    mode: 0400
+    owner: "{{ bastion_server_user.username }}"
+    group: "{{ bastion_server_user.username }}"
+
+- name: Bastion Server - Write pub Key
+  copy:
+    content: "{{ bastion_server_pubkey }}"
+    dest: "{{ created_user.home }}/.ssh/id_rsa.pub"
+    mode: 0600
+    owner: "{{ bastion_server_user.username }}"
+    group: "{{ bastion_server_user.username }}"
