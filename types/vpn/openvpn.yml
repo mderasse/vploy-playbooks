@@ -1,0 +1,27 @@
+---
+- name: Install and configure OpenVpn on VPN
+  hosts: all
+  become: yes
+  pre_tasks:
+  - name: Set Configuration for OpenVpn
+    set_fact:
+      openvpn_route_traffic: false # Whatever happen, keep it false. Firewall is managed by vploy
+      openvpn_server_options:
+        - "push \"redirect-gateway def1 bypass-dhcp\""
+      openvpn_port: "{{ extras.vpn.port }}"
+      openvpn_proto: "{{ extras.vpn.proto }}"
+      openvpn_client_to_client: "{{ extras.vpn.client_to_client }}"
+      openvpn_route_ranges: 
+        - "{{ network.private_range | ipaddr('address') | ipmath(0) }} {{ network.private_range | ipaddr('netmask') }}"
+      openvpn_dns_servers: "{{ dns.nameservers }}"
+      openvpn_use_pam: true
+      openvpn_use_pam_users:
+
+  - name: Configure routing traffic
+    set_fact:
+      openvpn_server_options:
+        - "push \"redirect-gateway def1 bypass-dhcp\""
+    when: extras.vpn.route_traffic == True
+
+  roles:
+    - stouts.openvpn

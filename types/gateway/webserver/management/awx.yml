@@ -1,18 +1,18 @@
-- name: Virtual Host - AWX redirect SSL
-  set_fact:
-    nginx_http_template: "{{ nginx_http_template|default({}) | combine({key: conf}) }}"
-  vars:
-    key: awx-redirect-ssl
-    conf:
-      template_file: http/default.conf.j2
-      conf_file_name: "awx.{{ dns.domain }}.redirect.conf"
-      conf_file_location: /etc/nginx/conf.d/
-      listen: 
-        listen_http: 
-          port: 80
-      server_name: awx.{{ dns.domain }}
-      error_page: /usr/share/nginx/html
-      https_redirect: true      
+# - name: Virtual Host - AWX redirect SSL
+#   set_fact:
+#     nginx_http_template: "{{ nginx_http_template|default({}) | combine({key: conf}) }}"
+#   vars:
+#     key: awx-redirect-ssl
+#     conf:
+#       template_file: http/default.conf.j2
+#       conf_file_name: "awx.{{ dns.domain }}.redirect.conf"
+#       conf_file_location: /etc/nginx/conf.d/
+#       listen: 
+#         listen_http: 
+#           port: 80
+#       server_name: awx.{{ dns.domain }}
+#       error_page: /usr/share/nginx/html
+#       https_redirect: true      
 
 - name: Virtual Host - AWX with SSL
   set_fact:

@@ -3,6 +3,8 @@
     name: 
       - sendmail
       - openssh-server
+      - git
+      - vim
     state: present
     update_cache: yes
     autoremove: yes

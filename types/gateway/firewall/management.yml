@@ -9,6 +9,7 @@
     firewall_masquerade_authorized_ips:
       - "{{ network.private_range | ipaddr('address') | ipmath(1) }}"
       - "{{ network.private_range | ipaddr('address') | ipmath(2) }}"
+      - "{{ network.private_range | ipaddr('address') | ipmath(3) }}"
     firewall_allowed_input_tcp_ports:
       - 80
       - 443
@@ -16,6 +17,9 @@
       - src_port: 22
         dest_ip: "{{ network.private_range | ipaddr('address') | ipmath(1) }}"
         dest_port: 22
+      - src_port: 8443
+        dest_ip: "{{ network.private_range | ipaddr('address') | ipmath(3) }}"
+        dest_port: 443
     # Authorize SSH from bastion and awx
     firewall_additional_rules:
       - "iptables -t filter -A INPUT -p tcp -s {{ network.private_range | ipaddr('address') | ipmath(1) }} --dport 22 -j ACCEPT"
