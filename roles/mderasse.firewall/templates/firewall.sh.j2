@@ -23,14 +23,15 @@ iptables -t mangle -F
 iptables -t mangle -X
 
 # ---------- Basic Policies ---------- 
-# Apply default policies
-iptables -P INPUT {{ firewall_default_input }}
-iptables -P FORWARD {{ firewall_default_forward }}
-iptables -P OUTPUT {{ firewall_default_output }}
 
 # Let's keep current connection
 iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptables -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+# Apply default policies
+iptables -P INPUT {{ firewall_default_input }}
+iptables -P FORWARD {{ firewall_default_forward }}
+iptables -P OUTPUT {{ firewall_default_output }}
 
 # Accept traffic from loopback interface (localhost).
 iptables -t filter -A INPUT -i lo -j ACCEPT

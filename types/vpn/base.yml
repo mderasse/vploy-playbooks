@@ -1,0 +1,23 @@
+---
+- name: Apply Basic Roles on VPN
+  hosts: all
+  pre_tasks:
+    - name: Load Default Debian Config
+      include_tasks: ../../config/debian.yml
+
+    - name: Launch Default Debian Pre Tasks
+      include_tasks: ../../base/pretask_debian.yml
+
+    - name: Set Special Sysctl configuration for openvpn traversal
+      set_fact:
+        sysctl_overwrite:
+          net.ipv4.ip_forward: 1
+      when: extras.vpn.route_traffic == True
+
+  roles:
+    - dev-sec.os-hardening
+    - dev-sec.ssh-hardening
+    - mderasse.fail2ban
+    - mderasse.rkhunter
+    - mderasse.bastion_client
+    - geerlingguy.ntp

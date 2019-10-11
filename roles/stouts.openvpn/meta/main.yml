@@ -1,0 +1,8 @@
+---
+galaxy_info:
+  author: klen
+  company: stouts
+  description: Manage OpenVPN server
+  min_ansible_version: 2.4
+  license: MIT
+dependencies: []

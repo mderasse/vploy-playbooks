@@ -35,6 +35,7 @@
 
 - name: WebServer - Set LetsEncrypt Configuration
   set_fact:
+    certbot_install_from_source: true
     certbot_create_if_missing: true
     certbot_certs:
       - domains:

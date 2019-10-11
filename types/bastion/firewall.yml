@@ -9,6 +9,8 @@
       firewall_default_input: DROP
       firewall_default_output: DROP
       firewall_default_forward: DROP
+      firewall_additional_rules:
+        - "iptables -t filter -A INPUT -p tcp -s {{ network.private_range | ipaddr('address') | ipmath(2) }} --dport 22 -j ACCEPT"
       # Authorize input
       firewall_allowed_input_tcp_ports:
         - 22
